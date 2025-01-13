@@ -1,0 +1,85 @@
+/* Estilos para el layout */
+.layout {
+  display: flex;
+}
+
+/* Estilo para el sidebar */
+.sidebar {
+  width: 200px; /* Ancho más estrecho */
+  background-color: #2c3e50; /* Color de fondo del sidebar */
+  color: white;
+  padding: 20px;
+  position: fixed;
+  height: 100%; /* Asegura que ocupe toda la altura de la pantalla */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Sombra para el efecto de profundidad */
+  transition: all 0.3s ease; /* Animación para cambios suaves */
+  overflow-y: auto; /* Permite el scroll vertical si el contenido excede */
+}
+
+.sidebar h2 {
+  text-align: center;
+  font-size: 20px; /* Reducir el tamaño del título */
+  margin-bottom: 20px; /* Menos espacio debajo */
+}
+
+/* Estilos para la lista */
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 15px 0; /* Reducir espacio entre los elementos del menú */
+}
+
+/* Estilo de los enlaces en el sidebar */
+.sidebar ul li a {
+  color: white !important; /* Color blanco por defecto */
+  text-decoration: none;
+  font-size: 16px; /* Reducir tamaño de fuente */
+  display: block;
+  padding: 8px 12px; /* Reducir el espacio de los enlaces */
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  background-color: #2980b9; /* Fondo azul al pasar el mouse */
+  color: #ecf0f1; /* Color de texto claro al pasar el mouse */
+}
+
+/* Estilo para el contenido principal */
+.content {
+  margin-left: 220px; /* Ajustar el margen para el contenido */
+  padding: 20px;
+  width: calc(100% - 220px); /* Ajustar el ancho del contenido */
+  transition: margin-left 0.3s ease;
+}
+
+/* Responsividad para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px; /* Ancho aún más estrecho en pantallas pequeñas */
+  }
+
+  .content {
+    margin-left: 180px; /* Ajustar el contenido */
+    width: calc(100% - 180px);
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 0; /* Se oculta el sidebar en dispositivos muy pequeños */
+    overflow-x: hidden;
+  }
+
+  .content {
+    margin-left: 0; /* El contenido ocupa todo el ancho */
+    width: 100%;
+  }
+
+  .sidebar.active {
+    width: 200px; /* El sidebar se muestra cuando se activa */
+  }
+}
