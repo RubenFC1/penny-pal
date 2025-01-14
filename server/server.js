@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); // Variables de entorno
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const pool = require('./db/pool');
-
 
 const usuarioRoutes = require('./routes/usuario');
 const categoriaRoutes = require('./routes/categoria');
@@ -32,6 +33,39 @@ app.use('/api', gastoRoutes);
 app.use('/api', ahorroRoutes);
 /*
 app.use('/api', tarjetaRoutes);*/
+
+app.post('/api/register', async (req, res) => {
+    const { nombre, correo, contraseña } = req.body;
+    try {
+      const hashedPassword = await bcrypt.hash(contraseña, 10);
+      await pool.query(
+        'INSERT INTO usuarios (nombre, correo, contraseña) VALUES ($1, $2, $3)',
+        [nombre, correo, hashedPassword]
+      );
+      res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    } catch (error) {
+      console.error('Error al registrar el usuario:', error.message);
+      res.status(500).json({ message: 'Error del servidor' });
+    }
+  });
+
+// Ruta de autenticación
+app.post('/api/login', async (req, res) => {
+  const { correo, contraseña } = req.body;
+  try {
+    const result = await pool.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);
+    const user = result.rows[0];
+    if (user && await bcrypt.compare(contraseña, user.contraseña)) {
+      const token = jwt.sign({ id_usuario: user.id_usuario }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.json({ token });
+    } else {
+      res.status(401).json({ message: 'Correo o contraseña incorrectos' });
+    }
+  } catch (error) {
+    console.error('Error al autenticar el usuario:', error.message);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
 
 app.get("/categorias", async(req, res) =>{
   try {
@@ -235,4 +269,3 @@ app.get("/ahorrosPorCategoria", async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
-
